@@ -1,0 +1,18 @@
+package kh.rechargetech.mmm.map.model.vo;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@NoArgsConstructor @AllArgsConstructor
+@Getter @Setter
+@ToString
+public class ChargerDetail {
+    private String chgerId;      // 충전기ID
+    private String chgerTypeNm;  // 충전기 타입명
+    private String stat;         // 상태 코드
+    private String statNm;       // 상태 명칭
+    private String output;       // 충전용량 kW
+}

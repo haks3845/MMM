@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kh.rechargetech.mmm.map.mapper.StationMapper">
+
+	<insert id="insertStationList" parameterType="java.util.List">
+		MERGE INTO CHARGING_STATION T
+		USING (
+		<foreach collection="list" item="item" index="index"
+			separator="UNION ALL">
+			SELECT
+			#{item.statId, jdbcType=VARCHAR} AS STATID,
+			#{item.chgerId, jdbcType=VARCHAR} AS CHGERID,
+			#{item.statNm,
+			jdbcType=VARCHAR} AS STATNM,
+			#{item.chgerType, jdbcType=VARCHAR} AS
+			CHGERTYPE,
+			#{item.addr, jdbcType=VARCHAR} AS ADDR,
+			#{item.addrDetail,
+			jdbcType=VARCHAR} AS ADDRDETAIL,
+			#{item.location, jdbcType=VARCHAR} AS
+			LOCATION,
+			#{item.lat, jdbcType=NUMERIC} AS LAT,
+			#{item.lng,
+			jdbcType=NUMERIC} AS LNG,
+			#{item.useTime, jdbcType=VARCHAR} AS
+			USETIME,
+			#{item.busiId, jdbcType=VARCHAR} AS BUSIID,
+			#{item.bnm,
+			jdbcType=VARCHAR} AS BNM,
+			#{item.busiNm, jdbcType=VARCHAR} AS BUSINM,
+			#{item.busiCall, jdbcType=VARCHAR} AS BUSICALL,
+			#{item.stat,
+			jdbcType=VARCHAR} AS STAT,
+			#{item.statUpdDt, jdbcType=VARCHAR} AS
+			STATUPDDT,
+			#{item.lastTsdt, jdbcType=VARCHAR} AS LASTTSDT,
+			#{item.lastTedt, jdbcType=VARCHAR} AS LASTTEDT,
+			#{item.nowTsdt,
+			jdbcType=VARCHAR} AS NOWTSDT,
+			#{item.output, jdbcType=NUMERIC} AS
+			OUTPUT,
+			#{item.method, jdbcType=VARCHAR} AS METHOD,
+			#{item.zcode,
+			jdbcType=VARCHAR} AS ZCODE,
+			#{item.zscode, jdbcType=VARCHAR} AS
+			ZSCODE,
+			#{item.kind, jdbcType=VARCHAR} AS KIND,
+			#{item.kindDetail,
+			jdbcType=VARCHAR} AS KINDDETAIL,
+			#{item.parkingFree, jdbcType=VARCHAR}
+			AS PARKINGFREE,
+			#{item.note, jdbcType=VARCHAR} AS NOTE,
+			#{item.limitYn, jdbcType=VARCHAR} AS LIMITYN,
+			#{item.limitDetail,
+			jdbcType=VARCHAR} AS LIMITDETAIL,
+			#{item.delYn, jdbcType=VARCHAR} AS
+			DELYN,
+			#{item.delDetail, jdbcType=VARCHAR} AS DELDETAIL,
+			#{item.trafficYn, jdbcType=VARCHAR} AS TRAFFICYN,
+			#{item.year,
+			jdbcType=VARCHAR} AS YEAR,
+			#{item.floorNum, jdbcType=VARCHAR} AS
+			FLOORNUM,
+			#{item.floorType, jdbcType=VARCHAR} AS FLOORTYPE
+			FROM DUAL
+		</foreach>
+		) S
+		ON (T.STATID = S.STATID AND T.CHGERID = S.CHGERID)
+		WHEN MATCHED THEN
+		UPDATE SET
+		T.STATNM = S.STATNM,
+		T.CHGERTYPE = S.CHGERTYPE,
+		T.ADDR =
+		S.ADDR,
+		T.ADDRDETAIL = S.ADDRDETAIL,
+		T.LOCATION = S.LOCATION,
+		T.LAT =
+		S.LAT,
+		T.LNG = S.LNG,
+		T.USETIME = S.USETIME,
+		T.BUSIID = S.BUSIID,
+		T.BNM =
+		S.BNM,
+		T.BUSINM = S.BUSINM,
+		T.BUSICALL = S.BUSICALL,
+		T.STAT = S.STAT,
+		T.STATUPDDT = S.STATUPDDT,
+		T.LASTTSDT = S.LASTTSDT,
+		T.LASTTEDT =
+		S.LASTTEDT,
+		T.NOWTSDT = S.NOWTSDT,
+		T.OUTPUT = S.OUTPUT,
+		T.METHOD =
+		S.METHOD,
+		T.ZCODE = S.ZCODE,
+		T.ZSCODE = S.ZSCODE,
+		T.KIND = S.KIND,
+		T.KINDDETAIL = S.KINDDETAIL,
+		T.PARKINGFREE = S.PARKINGFREE,
+		T.NOTE =
+		S.NOTE,
+		T.LIMITYN = S.LIMITYN,
+		T.LIMITDETAIL = S.LIMITDETAIL,
+		T.DELYN =
+		S.DELYN,
+		T.DELDETAIL = S.DELDETAIL,
+		T.TRAFFICYN = S.TRAFFICYN,
+		T.YEAR =
+		S.YEAR,
+		T.FLOORNUM = S.FLOORNUM,
+		T.FLOORTYPE = S.FLOORTYPE
+		WHEN NOT
+		MATCHED THEN
+		INSERT (
+		STATID, CHGERID, STATNM, CHGERTYPE, ADDR,
+		ADDRDETAIL, LOCATION,
+		LAT, LNG, USETIME, BUSIID, BNM, BUSINM, BUSICALL,
+		STAT,
+		STATUPDDT, LASTTSDT, LASTTEDT, NOWTSDT, OUTPUT, METHOD,
+		ZCODE,
+		ZSCODE, KIND, KINDDETAIL, PARKINGFREE, NOTE, LIMITYN,
+		LIMITDETAIL,
+		DELYN, DELDETAIL, TRAFFICYN, YEAR, FLOORNUM, FLOORTYPE
+		) VALUES (
+		S.STATID, S.CHGERID, S.STATNM, S.CHGERTYPE, S.ADDR, S.ADDRDETAIL,
+		S.LOCATION,
+		S.LAT, S.LNG, S.USETIME, S.BUSIID, S.BNM, S.BUSINM,
+		S.BUSICALL,
+		S.STAT,
+		S.STATUPDDT, S.LASTTSDT, S.LASTTEDT, S.NOWTSDT,
+		S.OUTPUT, S.METHOD,
+		S.ZCODE, S.ZSCODE, S.KIND, S.KINDDETAIL,
+		S.PARKINGFREE, S.NOTE, S.LIMITYN,
+		S.LIMITDETAIL, S.DELYN, S.DELDETAIL,
+		S.TRAFFICYN, S.YEAR, S.FLOORNUM,
+		S.FLOORTYPE
+		)
+	</insert>
+
+	<sql id="boundsWhere">
+		WHERE LAT BETWEEN #{minLat} AND #{maxLat}
+		AND LNG BETWEEN
+		#{minLng} AND #{maxLng}
+	</sql>
+
+	<!-- 충전소 단위 -->
+	<select id="selectStations"
+		resultType="kh.rechargetech.mmm.map.model.vo.StationMapPin">
+		SELECT 'STATION' AS type,
+		STATID AS id,
+		STATNM AS name,
+		LAT AS lat,
+		LNG AS lng,
+		CHARGER_CNT AS count
+		FROM EV_STATION
+		<include refid="boundsWhere" />
+		FETCH FIRST 500 ROWS ONLY
+	</select>
+
+	<!-- 동 대체: 약 1km 격자 -->
+	<select id="selectGridClusters"
+		resultType="kh.rechargetech.mmm.map.model.vo.StationMapPin">
+		SELECT 'CLUSTER' AS type,
+		ROUND(LAT, 2) || '_' || ROUND(LNG, 2) AS id,
+		'' AS name,
+		AVG(LAT) AS lat,
+		AVG(LNG) AS lng,
+		COUNT(*) AS count
+		FROM EV_STATION
+		<include refid="boundsWhere" />
+		GROUP BY ROUND(LAT, 2), ROUND(LNG, 2)
+	</select>
+
+	<!-- 시군구 -->
+	<select id="selectSigunguClusters"
+		resultType="kh.rechargetech.mmm.map.model.vo.StationMapPin">
+		SELECT 'CLUSTER' AS type,
+		ZSCODE AS id,
+		MAX(SIGUNGU_NM) AS name,
+		AVG(LAT) AS lat,
+		AVG(LNG) AS lng,
+		COUNT(*) AS count
+		FROM EV_STATION
+		<include refid="boundsWhere" />
+		GROUP BY ZSCODE
+	</select>
+
+	<!-- 시도 -->
+	<select id="selectSidoClusters"
+		resultType="kh.rechargetech.mmm.map.model.vo.MapPinVO">
+		SELECT 'CLUSTER' AS type,
+		ZCODE AS id,
+		MAX(SIDO_NM) AS name,
+		AVG(LAT) AS lat,
+		AVG(LNG) AS lng,
+		COUNT(*) AS count
+		FROM EV_STATION
+		<include refid="boundsWhere" />
+		GROUP BY ZCODE
+	</select>
+
+</mapper>

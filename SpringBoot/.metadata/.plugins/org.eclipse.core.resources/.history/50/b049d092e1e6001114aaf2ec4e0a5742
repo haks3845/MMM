@@ -1,0 +1,25 @@
+spring.application.name=mmm
+
+#Oracle BD 연결
+spring.datasource.driver-class-name=oracle.jdbc.driver.OracleDriver
+spring.datasource.url=jdbc:oracle:thin:@localhost:1521:xe
+spring.datasource.username=RECHARGETECH
+spring.datasource.password=RECHARGETECH
+#spring.datasource.hikari.auto-commit=false
+#포트 변경을 원할때 사용
+#server.port=8080
+
+# 아래는 에러페이지 구성을 위한 옵션인데
+# 디버깅을 위해 필요한 값을 노출하기 위해 있는거 같다
+# 원래 devtools를 임포트하지 않으면 직접 설정해야한다
+#spring.web.error.include-message=always
+#spring.web.error.include-path=always
+
+ev.api.base-url=https://apis.data.go.kr/B552584/EvCharger/getChargerInfo
+ev.api.service-key=19e6b6c5679e3ce6845b39b59a665e79aafb765844131dfd3763023b27c9a9fd
+
+#MyBatis 설정
+mybatis.configuration.map-underscore-to-camel-case=true
+mybatis.configuration.jdbc-type-for-null=NULL
+mybatis.mapper-locations=classpath:mappers/**.xml
+mybatis.type-aliases-package=kh.rechargetech.mmm.map.model.vo

@@ -1,0 +1,58 @@
+package kh.rechargetech.mmm.map.controller;
+
+import kh.rechargetech.mmm.map.service.EvDataSyncService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/mmm/api/map")
+@RequiredArgsConstructor
+public class MapController {
+
+    // 스프링 부트에서 서비스를 주입받기 위한 필드 선언 (소문자 시작)
+    private final EvDataSyncService evDataSyncService;
+
+    // 충전소 수동 동기화 API
+    @PostMapping("/sync")
+    public ResponseEntity<String> startStationSync() {
+        boolean started = evDataSyncService.triggerSync();
+        if (started) {
+            return ResponseEntity.ok("충전소 데이터 백그라운드 동기화가 시작되었습니다.");
+        } else {
+            return ResponseEntity.status(409).body("이미 데이터 동기화가 진행 중입니다.");
+        }
+    }
+
+    // 충전소 동기화 중단 API
+    @PostMapping("/sync/stop")
+    public ResponseEntity<String> stopStationSync() {
+        boolean stopped = evDataSyncService.stopSync();
+        if (stopped) {
+            return ResponseEntity.ok("동기화 중단 요청을 보냈습니다. (1초 내 종료)");
+        } else {
+            return ResponseEntity.badRequest().body("현재 실행 중인 동기화 작업이 없습니다.");
+        }
+    }
+    
+    // 리액트 지도 영역 조회 API
+    @GetMapping("/bounds")
+    public List<Map<String, Object>> getMapBounds(
+            @RequestParam("minLat") double minLat,
+            @RequestParam("minLng") double minLng,
+            @RequestParam("maxLat") double maxLat,
+            @RequestParam("maxLng") double maxLng,
+            @RequestParam int zoom) {
+
+        System.out.printf("지도 범위 수신 -> 위도: %f ~ %f, 경도: %f ~ %f%n", minLat, maxLat, minLng, maxLng);
+        
+        return mapService.getPins(minLat, minLng, maxLat, maxLng, zoom);
+    }
+}

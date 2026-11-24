@@ -1,0 +1,19 @@
+package kh.rechargetech.mmm.map.mapper;
+
+import kh.rechargetech.mmm.map.model.vo.ChargeStation;
+import org.apache.ibatis.annotations.Mapper;
+import java.util.List;
+import java.util.Map;
+
+@Mapper
+public interface StationMapper {
+    int insertStationList(List<ChargeStation> stationList);
+
+	List<Map<String, Object>> selectStations(double minLat, double minLng, double maxLat, double maxLng);
+
+	List<Map<String, Object>> selectGridClusters(double minLat, double minLng, double maxLat, double maxLng);
+
+	List<Map<String, Object>> selectSigunguClusters(double minLat, double minLng, double maxLat, double maxLng);
+
+	List<Map<String, Object>> selectSidoClusters(double minLat, double minLng, double maxLat, double maxLng);
+}

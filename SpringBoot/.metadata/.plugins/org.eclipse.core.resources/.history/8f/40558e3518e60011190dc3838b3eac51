@@ -1,0 +1,12 @@
+package kh.rechargetech.mmm.board.controller;
+
+@Controller
+@RequestMapping("/mmm/board")
+public class BoardViewController {
+
+    // 게시판 목록 화면
+    @GetMapping("/list")
+    public String listPage() {
+        return "board/list";   // templates/board/list.html
+    }
+}

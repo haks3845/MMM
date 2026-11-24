@@ -1,0 +1,73 @@
+package kh.rechargetech.mmm.map.service;
+
+import kh.rechargetech.mmm.map.model.vo.ChargeStation;
+import kh.rechargetech.mmm.map.model.vo.ChargerDetail;
+import kh.rechargetech.mmm.map.model.vo.StationMapPin;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import kh.rechargetech.mmm.map.mapper.StationMapper;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class StationService {
+
+    private final StationMapper stationMapper;
+    private final ObjectMapper objectMapper; // 스프링 부트가 기본 제공하는 빈 자동 주입
+
+    @Transactional
+    public int insertStationList(String jsonString) {
+        int result = 0;
+
+        try {
+            // 1. JSON 트리 구조 파싱 및 {"items": {"item": []}} 배열 접근
+            JsonNode rootNode = objectMapper.readTree(jsonString);
+            JsonNode itemArrayNode = rootNode.path("items").path("item");
+
+            if (itemArrayNode.isArray() && !itemArrayNode.isEmpty()) {
+                // 2. List<ChargeStation> 구조로 매핑 변환
+                List<ChargeStation> stationList = objectMapper.readValue(
+                        itemArrayNode.toString(),
+                        new TypeReference<ArrayList<ChargeStation>>() {}
+                );
+
+                // 3. MyBatis Mapper 호출 (SqlSession 전달 불필요)
+                result = stationMapper.insertStationList(stationList);
+
+                // Oracle DECLARE BEGIN...END문 특성상 성공 시 실행 블록 기준으로 정상 반영
+                if (result >= 0) {
+                    log.info("🚀 [DB 성공] 전기차 충전소 데이터 {}건 저장/업데이트 완료.", stationList.size());
+                }
+            } else {
+                log.warn("⚠️ 파싱할 충전기 데이터(item)가 존재하지 않습니다.");
+            }
+
+        } catch (Exception e) {
+            log.error("❌ [에러] 서비스 내 JSON 파싱 및 DB 저장 중 예외 발생", e);
+            // @Transactional이 동작하도록 런타임 예외로 던져서 자동 롤백 유도
+            throw new RuntimeException("충전소 데이터 저장 중 오류 발생", e);
+        }
+
+        return result;
+    }
+
+	public List<StationMapPin> getPins(double minLat, double minLng, double maxLat, double maxLng, int zoom) {
+		if (zoom >= 15) return stationMapper.selectStations(minLat, minLng, maxLat, maxLng);
+        if (zoom >= 13) return stationMapper.selectGridClusters(minLat, minLng, maxLat, maxLng);
+        if (zoom >= 11) return stationMapper.selectSigunguClusters(minLat, minLng, maxLat, maxLng);
+        return stationMapper.selectSidoClusters(minLat, minLng, maxLat, maxLng);
+	}
+
+	public List<ChargerDetail> getChargers(String statId) {
+		return stationMapper.selectChargersByStation(statId);
+	}
+}
