@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kh.rechargetech.mmm.board.model.mapper.BoardMapper">
+	<select id="selectBoardList"
+	        resultType="kh.rechargetech.mmm.board.model.vo.Board">
+	
+	    SELECT
+	        B.BOARD_NO AS boardNo,
+	        B.BOARD_TYPE AS boardType,
+	        B.MEMBER_NO AS memberNo,
+	        B.BOARD_TITLE AS boardTitle,
+	        B.BOARD_DATE AS boardDate,
+	        M.NICKNAME AS nickname,
+	        (
+	            SELECT COUNT(*)
+	            FROM REPLY R
+	            WHERE R.BOARD_NO = B.BOARD_NO
+	        ) AS replyCount
+	    FROM BOARD B
+	    JOIN MEMBER M
+	        ON B.MEMBER_NO = M.MEMBER_NO
+	    WHERE B.BOARD_TYPE = 3
+	    ORDER BY B.BOARD_DATE DESC, B.BOARD_NO DESC
+	
+	</select>	
+</mapper>

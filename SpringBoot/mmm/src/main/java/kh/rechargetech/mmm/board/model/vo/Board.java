@@ -21,4 +21,6 @@ public class Board {
 	private String boardCon;
 	private Date boardModDate;
 	private Date boardDate;
+	private String nickname;
+    private int replyCount;
 }
