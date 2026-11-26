@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>백엔드 개발용 임시 메인</title>
+    <style>
+        body {
+            font-family: 'Malgun Gothic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 460px;
+            width: 90%;
+            text-align: center;
+        }
+        .badge {
+            display: inline-block;
+            background-color: #ff9800;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            color: #1a1a1a;
+        }
+        p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-size: 15px;
+        }
+        /* 로그인 유저 정보 박스 스타일 추가 */
+        .user-info-box {
+            background-color: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: left;
+            font-size: 14px;
+        }
+        .user-info-box .welcome {
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 6px;
+            font-size: 15px;
+        }
+        .user-info-box .detail {
+            color: #555;
+            margin: 4px 0;
+        }
+        .section-title {
+            text-align: left;
+            font-size: 13px;
+            font-weight: bold;
+            color: #888;
+            margin: 20px 0 8px 0;
+        }
+        .link-group {
+            display: flex;
+            gap: 10px;
+        }
+        a, button.btn-action {
+            flex: 1;
+            display: block;
+            padding: 13px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 15px;
+            transition: background-color 0.2s;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        a:hover, button.btn-action:hover {
+            background-color: #0056b3;
+        }
+        a.outline {
+            background-color: white;
+            color: #007bff;
+            border: 1px solid #007bff;
+        }
+        a.outline:hover {
+            background-color: #f0f7ff;
+        }
+        a.board-btn {
+            background-color: #28a745;
+        }
+        a.board-btn:hover {
+            background-color: #218838;
+        }
+        button.logout-btn {
+            background-color: #dc3545;
+        }
+        button.logout-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="badge">개발용 임시 메인</span>
+        <h1>프로젝트 기능 테스트</h1>
+        <p>
+            현재 메인 화면은 React로 별도 작업 중입니다.<br>
+            아래 버튼을 눌러 각 기능 페이지로 이동하세요.
+        </p>
+
+        <!-- 로그인 상태일 때만 노출되는 유저 정보 박스 -->
+        <div th:if="${session.loginUser != null}" class="user-info-box">
+            <div class="welcome">
+                🎉 <span th:text="${session.loginUser.memberId}">user01</span>님 로그인 중
+            </div>
+            <!-- <div class="detail">이름: <span th:text="${session.loginUser.memberName}">test</span></div> -->
+            <!-- <div class="detail">이메일: <span th:text="${session.loginUser.memberEmail}">test@test.com</span></div> -->
+        </div>
+
+        <!-- 1. 회원 기능 -->
+        <div class="section-title">회원 관리 (Member)</div>
+
+        <!-- 비로그인 상태일 때 버튼 -->
+        <div th:if="${session.loginUser == null}" class="link-group">
+            <a href="/mmm/member/login">로그인</a>
+            <a href="/mmm/member/signup" class="outline">회원가입</a>
+        </div>
+
+        <!-- 로그인 상태일 때 버튼 -->
+        <div th:if="${session.loginUser != null}" class="link-group">
+            <a href="/mmm/member/mypage" class="outline">마이페이지</a>
+            <button type="button" id="logoutBtn" class="btn-action logout-btn">로그아웃</button>
+        </div>
+
+        <!-- 2. 게시판 기능 -->
+        <div class="section-title">커뮤니티 (Board)</div>
+        <div class="link-group">
+            <a href="/mmm/board/list" class="board-btn">게시판으로 가기</a>
+        </div>
+    </div>
+
+    <!-- 로그아웃 처리 스크립트 (로그인 시에만 렌더링) -->
+    <script th:if="${session.loginUser != null}">
+        document.getElementById('logoutBtn').addEventListener('click', async function() {
+            try {
+                // 백엔드 로그아웃 API 주소에 맞게 수정하세요
+                const response = await fetch('/mmm/api/member/logout', {
+                    method: 'POST'
+                });
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('로그아웃에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('로그아웃 에러:', error);
+                alert('서버 통신 중 오류가 발생했습니다.');
+            }
+        });
+    </script>
+</body>
+</html>
