@@ -48,4 +48,6 @@ public class MemberViewController {
     public String loginPage() {
         return "member/login";   // templates/member/login.html
     }
+    
+    
 }
