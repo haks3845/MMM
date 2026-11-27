@@ -32,6 +32,24 @@
 	    AND B.BOARD_TYPE = 3
 	</select>
 	
+	<!--  게시글 검색 -->
+	<select id="searchBoard" resultType="kh.rechargetech.mmm.board.model.vo.Board">
+	    SELECT B.BOARD_NO AS boardNo, B.MEMBER_NO AS memberNo, B.BOARD_TYPE AS boardType,
+	           B.BOARD_TITLE AS boardTitle, B.BOARD_DATE AS boardDate, M.NICKNAME AS nickname,
+	           (SELECT COUNT(*)
+	            FROM REPLY R
+	            WHERE R.BOARD_NO = B.BOARD_NO)
+	            AS replyCount
+	    FROM BOARD B
+	    JOIN MEMBER M
+	        ON B.MEMBER_NO = M.MEMBER_NO
+	    WHERE B.BOARD_TYPE = 3
+	    AND ((#{param1} = 'title' AND B.BOARD_TITLE LIKE '%' || #{param2} || '%')
+	        OR (#{param1} = 'content' AND B.BOARD_CON LIKE '%' || #{param2} || '%')
+	        OR (#{param1} = 'nickname' AND M.NICKNAME LIKE '%' || #{param2} || '%'))
+	    ORDER BY B.BOARD_DATE DESC, B.BOARD_NO DESC
+	</select>
+	
 	<!-- 게시글 페이지 이동 -->
 	<select id="selectBoardPage" resultType="kh.rechargetech.mmm.board.model.vo.Board">
 	    SELECT boardNo, memberNo, boardType, boardTitle, boardDate, nickname, replyCount

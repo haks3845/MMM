@@ -1,11 +1,760 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>게시판 - RECHARGETECH</title>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>자유게시판 - RECHARGETECH</title>
+    <style>
+        :root {
+            --ink:#101b30;
+            --muted:#647990;
+            --blue:#007fba;
+            --line:#d8e9fb;
+            --bg:#f1f6fb;
+            --pale:#f5f9fc;
+            --grad:linear-gradient(115deg,#0ca4df,#2465e9);
+        }
+
+        * {
+            box-sizing:border-box;
+        }
+
+        body {
+            margin:0;
+            background:var(--bg);
+            color:var(--ink);
+            font:14px/1.55 "Pretendard","Noto Sans KR","Malgun Gothic",sans-serif;
+        }
+
+        a {
+            color:inherit;
+            text-decoration:none;
+        }
+
+        button,input,select,textarea {
+            font:inherit;
+        }
+
+        button {
+            cursor:pointer;
+        }
+
+        button:disabled {
+            cursor:not-allowed;
+            opacity:.55;
+        }
+
+        a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible {
+            outline:3px solid #76c8f2;
+            outline-offset:2px;
+        }
+
+        .site-header {
+            background:white;
+            border-bottom:1px solid #d7e9fa;
+            box-shadow:0 2px 12px #487dae08;
+        }
+
+        .header-inner {
+            max-width:1040px;
+            min-height:65px;
+            margin:auto;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:18px;
+        }
+
+        .brand {
+            display:flex;
+            align-items:center;
+            gap:10px;
+            white-space:nowrap;
+        }
+
+        .brand-icon {
+            width:38px;
+            height:38px;
+            flex:none;
+        }
+
+        .brand strong {
+            display:block;
+            color:#006a9f;
+            font-size:18px;
+            font-weight:900;
+            letter-spacing:-.6px;
+            line-height:1.2;
+        }
+
+        .brand small {
+            display:block;
+            color:var(--muted);
+            font-size:11px;
+            margin-top:4px;
+        }
+
+        .main-nav,.auth,.actions,.search-form,.vote-row,.comment-actions,.form-actions {
+            display:flex;
+            align-items:center;
+            gap:8px;
+            flex-wrap:wrap;
+        }
+
+        .main-nav {
+            gap:9px;
+        }
+
+        .main-nav a,.main-nav span {
+            padding:9px 15px;
+            font-weight:700;
+            color:#35475c;
+            border-radius:8px;
+            white-space:nowrap;
+        }
+
+        .main-nav .active,.main-nav a:hover {
+            background:#dff1fc;
+            color:#006d9f;
+        }
+
+        .btn {
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:5px;
+            min-height:36px;
+            padding:8px 14px;
+            border:1px solid #b9e3fc;
+            background:#e2f3fd;
+            color:#006eaa;
+            border-radius:7px;
+            font-weight:700;
+            white-space:nowrap;
+            font-size:13px;
+        }
+
+        .btn:hover {
+            filter:brightness(.97);
+        }
+
+        .btn-primary {
+            background:var(--grad);
+            color:white;
+            border-color:#237cea;
+            box-shadow:0 3px 8px #167be018;
+        }
+
+        .btn-outline {
+            background:white;
+            border-color:#8fd4fb;
+        }
+
+        .btn-quiet {
+            background:white;
+            border-color:#d7e5f1;
+            color:#536980;
+        }
+
+        .btn-danger {
+            background:#fff5f5;
+            border-color:#ffd0d0;
+            color:#bd3d3d;
+        }
+
+        .btn-sm {
+            min-height:30px;
+            padding:4px 10px;
+            font-size:12px;
+        }
+
+        .container {
+            max-width:1040px;
+            margin:32px auto 60px;
+        }
+
+        .card {
+            background:white;
+            border:1px solid #dcecfb;
+            border-radius:16px;
+            padding:28px;
+            box-shadow:0 6px 24px #355a8410;
+        }
+
+        .heading {
+            text-align:center;
+            margin:0 0 25px;
+        }
+
+        .heading h1 {
+            font-size:24px;
+            margin:0 0 8px;
+            letter-spacing:-.7px;
+        }
+
+        .heading p {
+            margin:0;
+            color:var(--muted);
+            font-size:14px;
+        }
+
+        .toolbar {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            flex-wrap:wrap;
+            margin:0 0 15px;
+        }
+
+        .count {
+            color:var(--muted);
+        }
+
+        .count strong {
+            color:#0087c5;
+        }
+
+        .field,select,input[type=text],textarea {
+            border:1px solid #cfdeed;
+            border-radius:7px;
+            background:#fff;
+            color:var(--ink);
+            padding:9px 12px;
+            min-height:38px;
+        }
+
+        input::placeholder,textarea::placeholder {
+            color:#94a4b6;
+        }
+
+        .search-form input {
+            width:210px;
+        }
+
+        .table-wrap {
+            overflow-x:auto;
+            border:1px solid var(--line);
+            border-radius:10px;
+        }
+
+        .board-table {
+            border-collapse:collapse;
+            width:100%;
+            min-width:690px;
+            table-layout:fixed;
+        }
+
+        .board-table th {
+            background:#f1f7fc;
+            color:#415970;
+            font-weight:700;
+            padding:13px 8px;
+            text-align:center;
+            border-bottom:1px solid var(--line);
+        }
+
+        .board-table td {
+            padding:15px 8px;
+            border-bottom:1px solid #e7eff6;
+            text-align:center;
+            color:#51677c;
+            font-size:13px;
+        }
+
+        .board-table tr:last-child td {
+            border-bottom:none;
+        }
+
+        .board-table tbody tr:hover {
+            background:#f7fbff;
+        }
+
+        .board-table .title-cell {
+            text-align:left;
+            color:var(--ink);
+            font-size:14px;
+            overflow-wrap:anywhere;
+        }
+
+        .title-cell a:hover {
+            color:#0084c8;
+            text-decoration:underline;
+        }
+
+        .reply-count {
+            color:#0088c8;
+            font-weight:700;
+            margin-left:4px;
+            font-size:12px;
+        }
+
+        .tag {
+            display:inline-block;
+            background:#dff1fc;
+            color:#0075af;
+            padding:4px 10px;
+            border-radius:20px;
+            font-size:12px;
+            font-weight:700;
+            white-space:nowrap;
+        }
+
+        .tag-notice {
+            background:#fff0f0;
+            color:#da4444;
+        }
+
+        .tag-dr {
+            background:#e2f5ed;
+            color:#17805b;
+        }
+
+        .tag-admin {
+            background:#fff1dc;
+            color:#986018;
+        }
+
+        .board-table .empty {
+            padding:48px 12px;
+            color:#7a8fa3;
+        }
+
+        .bottom-bar {
+            display:flex;
+            justify-content:flex-end;
+            margin-top:18px;
+            gap:8px;
+        }
+
+        .pagination {
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            gap:6px;
+            flex-wrap:wrap;
+            margin-top:22px;
+        }
+
+        .page {
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            min-width:34px;
+            height:34px;
+            padding:0 8px;
+            border:1px solid #d6e6f6;
+            border-radius:7px;
+            color:#486177;
+            background:#fff;
+        }
+
+        .page.active {
+            background:var(--grad);
+            border-color:#2387dc;
+            color:white;
+            font-weight:700;
+        }
+
+        .page.disabled {
+            color:#b6c4d1;
+            background:#f8fafc;
+        }
+
+        .page:not(.disabled):hover {
+            border-color:#76c8f2;
+        }
+
+        .breadcrumb {
+            display:flex;
+            align-items:center;
+            gap:8px;
+            color:var(--muted);
+            font-size:13px;
+            margin:0 0 15px;
+        }
+
+        .breadcrumb a {
+            color:#007db9;
+        }
+
+        .article-head {
+            background:var(--pale);
+            border:1px solid var(--line);
+            padding:22px;
+            border-radius:10px;
+        }
+
+        .article-head h1 {
+            font-size:25px;
+            line-height:1.4;
+            margin:12px 0 15px;
+            overflow-wrap:anywhere;
+        }
+
+        .meta {
+            display:flex;
+            align-items:center;
+            gap:9px 20px;
+            flex-wrap:wrap;
+            color:var(--muted);
+            font-size:13px;
+        }
+
+        .meta strong {
+            color:#354e67;
+        }
+
+        .article-body {
+            min-height:210px;
+            padding:28px 8px;
+            line-height:1.85;
+            white-space:pre-wrap;
+            overflow-wrap:anywhere;
+        }
+
+        .vote-row {
+            justify-content:center;
+            margin:8px 0 26px;
+        }
+
+        .vote-btn {
+            min-width:115px;
+            min-height:42px;
+        }
+
+        .vote-btn.selected {
+            background:#d0ebff;
+            border-color:#41a9e8;
+            color:#00629e;
+            box-shadow:inset 0 0 0 1px #41a9e8;
+        }
+
+        .article-actions {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            flex-wrap:wrap;
+            gap:10px;
+            padding-top:18px;
+            border-top:1px solid var(--line);
+        }
+
+        .comments-card {
+            margin-top:24px;
+        }
+
+        .section-title {
+            margin:0 0 18px;
+            font-size:19px;
+        }
+
+        .section-title span {
+            color:#0085c2;
+        }
+
+        .comment {
+            padding:17px 0;
+            border-bottom:1px solid #e2edf7;
+        }
+
+        .comment:first-of-type {
+            border-top:1px solid #e2edf7;
+        }
+
+        .comment-top {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:10px;
+            flex-wrap:wrap;
+        }
+
+        .comment-top strong {
+            color:#233e58;
+        }
+
+        .comment-time {
+            color:var(--muted);
+            font-size:12px;
+        }
+
+        .comment-body {
+            margin:10px 0;
+            white-space:pre-wrap;
+            overflow-wrap:anywhere;
+        }
+
+        .comment-actions {
+            justify-content:flex-end;
+        }
+
+        .comment-edit {
+            margin-top:10px;
+        }
+
+        .comment-edit summary {
+            cursor:pointer;
+            color:#007db9;
+            font-weight:700;
+            font-size:13px;
+            width:max-content;
+        }
+
+        .comment-edit form {
+            margin-top:8px;
+        }
+
+        .comment-compose {
+            margin-top:22px;
+            background:#f5f9fc;
+            padding:16px;
+            border:1px solid var(--line);
+            border-radius:10px;
+        }
+
+        .comment-compose label {
+            display:block;
+            font-weight:700;
+            margin-bottom:8px;
+        }
+
+        textarea {
+            display:block;
+            width:100%;
+            resize:vertical;
+            line-height:1.65;
+        }
+
+        .comment-compose textarea,.comment-edit textarea {
+            min-height:90px;
+        }
+
+        .form-actions {
+            justify-content:flex-end;
+            margin-top:12px;
+        }
+
+        .form-group {
+            margin-bottom:23px;
+        }
+
+        .form-group label {
+            display:block;
+            font-weight:700;
+            margin-bottom:8px;
+        }
+
+        .form-group input,.form-group textarea {
+            width:100%;
+        }
+
+        .form-group textarea {
+            min-height:300px;
+        }
+
+        .form-help,.muted {
+            color:var(--muted);
+            font-size:13px;
+        }
+
+        .form-help {
+            margin:7px 0 0;
+        }
+
+        .form-footer {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            flex-wrap:wrap;
+            gap:12px;
+            padding-top:20px;
+            border-top:1px solid var(--line);
+        }
+
+        .alert {
+            padding:12px 15px;
+            border:1px solid #bfe2fa;
+            background:#eff8ff;
+            color:#285c7a;
+            border-radius:8px;
+            margin:0 0 17px;
+        }
+
+        .alert-error {
+            background:#fff4f4;
+            color:#a73535;
+            border-color:#ffd2d2;
+        }
+
+        .alert-success {
+            background:#edf9f4;
+            color:#19704d;
+            border-color:#c6ebd9;
+        }
+
+        .empty-comment {
+            text-align:center;
+            color:var(--muted);
+            padding:20px;
+        }
+
+        .footer {
+            text-align:center;
+            color:#8294a7;
+            font-size:12px;
+            margin:28px 0;
+        }
+
+        .demo-strip {
+            background:#e5f2fc;
+            border-bottom:1px solid #cde4f7;
+            padding:8px 16px;
+            color:#32617f;
+            font-size:12px;
+        }
+
+        .demo-strip .inner {
+            max-width:1040px;
+            margin:auto;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:8px;
+            flex-wrap:wrap;
+        }
+
+        .demo-strip select {
+            min-height:29px;
+            padding:3px 7px;
+            font-size:12px;
+        }
+
+        .inline-form {
+            display:inline-flex;
+            margin:0;
+        }
+
+        .auth-label {
+            font-size:13px;
+            color:#56748d;
+        }
+
+        .sr-only {
+            position:absolute;
+            width:1px;
+            height:1px;
+            padding:0;
+            margin:-1px;
+            overflow:hidden;
+            clip:rect(0,0,0,0);
+            white-space:nowrap;
+            border:0;
+        }
+
+        @media(max-width:1100px) {
+            .header-inner {
+                padding:12px 18px;
+                flex-wrap:wrap;
+            }
+            .container {
+                margin:24px 16px 48px;
+            }
+        }
+
+        @media(max-width:650px) {
+            .card {
+                padding:18px;
+            }
+            .main-nav {
+                order:3;
+                width:100%;
+                gap:2px;
+            }
+            .main-nav a,.main-nav span {
+                padding:8px 9px;
+                font-size:12px;
+            }
+            .brand strong {
+                font-size:15px;
+            }
+            .brand small {
+                font-size:10px;
+            }
+            .search-form {
+                width:100%;
+            }
+            .search-form input {
+                flex:1;
+                min-width:100px;
+                width:130px;
+            }
+            .article-head {
+                padding:16px;
+            }
+            .article-head h1 {
+                font-size:21px;
+            }
+            .article-actions {
+                align-items:flex-start;
+            }
+            .heading h1 {
+                font-size:21px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>게시판 목록</h1>
-  <p>게시글 목록은 여기에 출력합니다s.</p>
+<header th:replace="~{board/header :: header}"></header>
+<main class="container">
+    <section class="card">
+        <div class="heading"><h1>자유게시판</h1><p>전기절약 노하우와 다양한 정보를 자유롭게 공유해 보세요.</p></div>
+        <p class="alert alert-success" th:if="${successMessage != null}" th:text="${successMessage}"></p>
+        <p class="alert alert-error" th:if="${errorMessage != null}" th:text="${errorMessage}"></p>
+        <div class="toolbar">
+            <div class="count"><span th:text="${keyword != null ? '검색 결과' : '전체 게시글'}">전체 게시글</span> <strong th:text="${listCount != null ? listCount : #lists.size(boardList)}">21</strong>개</div>
+            <form class="search-form" method="get" th:action="@{/mmm/board/search}">
+                <label class="sr-only" for="searchType">검색 조건</label>
+                <select id="searchType" name="searchType"><option value="title" th:selected="${searchType == 'title'}">제목</option><option value="content" th:selected="${searchType == 'content'}">내용</option><option value="nickname" th:selected="${searchType == 'nickname'}">닉네임</option></select>
+                <label class="sr-only" for="keyword">검색어</label><input type="text" id="keyword" name="keyword" th:value="${keyword}" placeholder="검색어를 입력하세요.">
+                <button class="btn" type="submit">검색</button><a class="btn btn-quiet" th:if="${keyword != null}" th:href="@{/mmm/board/page}">초기화</a>
+            </form>
+        </div>
+        <div class="table-wrap">
+            <table class="board-table">
+                <colgroup><col style="width:8%"><col style="width:12%"><col style="width:47%"><col style="width:17%"><col style="width:16%"></colgroup>
+                <thead><tr><th scope="col">번호</th><th scope="col">구분</th><th scope="col">제목</th><th scope="col">작성자</th><th scope="col">작성일</th></tr></thead>
+                <tbody>
+                    <tr th:each="board : ${boardList}">
+                        <td th:text="${board.boardNo}">21</td>
+                        <td><span class="tag tag-notice" th:if="${board.boardType == 1}">공지</span><span class="tag tag-dr" th:if="${board.boardType == 2}">DR알람</span><span class="tag" th:if="${board.boardType == 3}">일반</span></td>
+                        <td class="title-cell"><a th:href="@{/mmm/board/detail(boardNo=${board.boardNo})}" th:text="${board.boardTitle}">게시글 제목</a><span class="reply-count" th:if="${board.replyCount > 0}" th:text="|[${board.replyCount}]|">[3]</span></td>
+                        <td th:text="${board.nickname}">작성자</td><td th:text="${board.boardDate}">2026-11-27</td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(boardList)}"><td colspan="5" class="empty" th:text="${keyword != null ? '검색 결과가 없습니다.' : '등록된 게시글이 없습니다.'}"></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="bottom-bar"><a class="btn btn-primary" th:href="@{/mmm/board/write}">＋ 글쓰기</a></div>
+        <!-- 기존 검색 Controller는 페이지 정보를 제공하지 않으므로 검색 페이지네이션은 자동 숨김 -->
+        <nav class="pagination" aria-label="게시글 페이지" th:if="${currentPage != null and maxPage != null and maxPage > 1}"
+             th:with="start=${currentPage > 2 ? currentPage - 2 : 1}, end=${currentPage + 2 < maxPage ? currentPage + 2 : maxPage}">
+            <span class="page disabled" th:if="${currentPage == 1}">«</span><span class="page disabled" th:if="${currentPage == 1}">‹</span>
+            <th:block th:if="${currentPage > 1}">
+                <a class="page" aria-label="첫 페이지" th:href="${keyword == null} ? @{/mmm/board/page(page=1)} : @{/mmm/board/search(searchType=${searchType},keyword=${keyword},page=1)}">«</a>
+                <a class="page" aria-label="이전 페이지" th:href="${keyword == null} ? @{/mmm/board/page(page=${currentPage - 1})} : @{/mmm/board/search(searchType=${searchType},keyword=${keyword},page=${currentPage - 1})}">‹</a>
+            </th:block>
+            <th:block th:each="p : ${#numbers.sequence(start,end)}">
+                <a class="page" th:if="${keyword == null}" th:classappend="${p == currentPage ? 'active' : ''}" th:attr="aria-current=${p == currentPage ? 'page' : null}" th:href="@{/mmm/board/page(page=${p})}" th:text="${p}">1</a>
+                <a class="page" th:if="${keyword != null}" th:classappend="${p == currentPage ? 'active' : ''}" th:attr="aria-current=${p == currentPage ? 'page' : null}" th:href="@{/mmm/board/search(searchType=${searchType},keyword=${keyword},page=${p})}" th:text="${p}">1</a>
+            </th:block>
+            <th:block th:if="${currentPage < maxPage}">
+                <a class="page" aria-label="다음 페이지" th:href="${keyword == null} ? @{/mmm/board/page(page=${currentPage + 1})} : @{/mmm/board/search(searchType=${searchType},keyword=${keyword},page=${currentPage + 1})}">›</a>
+                <a class="page" aria-label="마지막 페이지" th:href="${keyword == null} ? @{/mmm/board/page(page=${maxPage})} : @{/mmm/board/search(searchType=${searchType},keyword=${keyword},page=${maxPage})}">»</a>
+            </th:block>
+            <span class="page disabled" th:if="${currentPage == maxPage}">›</span><span class="page disabled" th:if="${currentPage == maxPage}">»</span>
+        </nav>
+    </section>
+    <footer class="footer">RECHARGETECH · 스마트 에너지 리워드 커뮤니티</footer>
+</main>
 </body>
 </html>

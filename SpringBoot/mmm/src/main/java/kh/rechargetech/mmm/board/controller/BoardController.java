@@ -93,14 +93,16 @@ public class BoardController {
 			return "board/list";
 		}
 		
-
 		// 게시글 작성
 		
 		// 게시글 수정
 		
 		// 게시글 삭제
 	
-		
+		@GetMapping("/write")
+		public String boardWrite() {
+			return "board/write";
+		}
 		
 		// 댓글
 		// 댓글 조회
