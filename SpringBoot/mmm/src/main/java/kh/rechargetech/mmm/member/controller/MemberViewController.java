@@ -49,5 +49,6 @@ public class MemberViewController {
         return "member/login";   // templates/member/login.html
     }
     
+   
     
 }

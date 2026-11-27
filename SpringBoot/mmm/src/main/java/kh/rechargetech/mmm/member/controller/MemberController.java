@@ -45,5 +45,32 @@ public class MemberController {
         return ResponseEntity.ok(loginUser);
     }
     
-  
+    
+    // 아이디 중복 확인 API
+    @GetMapping("/checkId")
+    public String checkId(@RequestParam("id") String id) {
+        int count = memberService.checkId(id);
+        return String.valueOf(count);
+    }
+
+    // 닉네임 중복 확인 API
+    @GetMapping("/checkNickName")
+    public String checkNickName(@RequestParam("nickName") String nickName) {
+        int count = memberService.checkNickName(nickName);
+        return String.valueOf(count);
+    }
+    
+    // 회원가입 API (HTML <form action="/mmm/api/member/enroll" method="POST"> 처리)
+    @PostMapping("/enroll")
+    public ResponseEntity<String> enrollMember(Member member) {
+        int result = memberService.enrollMember(member);
+        
+        if (result > 0) {
+            return ResponseEntity.ok("회원가입이 완료되었습니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("회원가입에 실패했습니다.");
+        }
+    }
+    
 }

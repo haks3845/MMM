@@ -14,4 +14,16 @@ public class MemberService {
     public Member login(Member loginReq) {
         return memberMapper.loginMember(loginReq);
     }
+    // 아이디 중복 확인
+	public int checkId(String id) {
+		return memberMapper.checkId(id);
+	}
+	// 닉네임 중복 확인
+	public int checkNickName(String nickName) {
+		return memberMapper.checkNickName(nickName);
+	}
+	// 회원가입
+	public int enrollMember(Member member) {
+		return memberMapper.enrollMember(member);
+	}
 }

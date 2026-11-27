@@ -14,9 +14,9 @@
 				<h2>Sign Up</h2>
 			</div>
 
-<!-- 			<div style="margin-left: 350px; margin-right: 350px;"> -->
+		   <!-- <div style="margin-left: 350px; margin-right: 350px;"> -->
 				<div class="container" style="max-width: 600px;">
-				<form class="needs-validation" action="/member/enroll" method="POST" onsubmit="return validateForm()">
+				<form class="needs-validation" action="/mmm/api/member/enroll" method="POST" onsubmit="return validateForm()">
 					<div class="row g-3">
 						<!-- 1. 아이디 -->
 						<div class="col-12">
@@ -24,29 +24,41 @@
 							<!-- <input type="text" class="form-control" id="id" name="id" placeholder="아이디 입력(5~20자, 알파벳 소문자나 숫자, 특수문자(-,_)로 구성)" minlength="5"  maxlength="20"  pattern="[a-z0-9\-_]{5,20}" title="5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다." oninput="this.value = this.value.replace(/[^a-z0-9\-_]/g, '')" required> -->
 							<!-- oninput="this.value = this.value.replace(/\s/g, '')" : 띄어쓰기, 탭, 공백 제거 -->
 							<!--  oninput="this.value = this.value.replace(/[^a-z0-9\-_]/g, '')"  : • 대괄호 안의 ^는 '부정(Not)'을 의미합니다. • 즉, 영문 소문자(a-z), 숫자(0-9), 하이픈(-), 언더바(_)를 제외한 모든 문자(공백, 한글, 대문자 등)를 입력 즉시 제거합니다. -->
-							<input  type="text" class="form-control" id="userId" name="id" placeholder="아이디 입력(5~20자, 영문 소문자, 숫자, -, _)" minlength="5" maxlength="20" pattern="[a-z0-9_-]{5,20}" title="5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다." autocomplete="off" autocapitalize="none" spellcheck="false" required>
+							<!-- <input  type="text" class="form-control" id="userId" name="id" placeholder="아이디 입력(5~20자, 영문 소문자, 숫자, -, _)" minlength="5" maxlength="20" pattern="[a-z0-9_-]{5,20}" title="5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다." autocomplete="off" autocapitalize="none" spellcheck="false" required> -->
+							<input type="text" class="form-control" id="userId" name="memberId" placeholder="아이디 입력(5~20자, 영문 소문자, 숫자, -, _)" minlength="5" maxlength="20" pattern="[a-z0-9_\-]{5,20}" title="5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다." oninput="this.value = this.value.replace(/[^a-z0-9_-]/g, '');" autocomplete="off" autocapitalize="none" spellcheck="false" required>
 							<!--  oninput : 사용자가 글자를 입력할 때마다 즉시, pattern : 주로 폼 제출(submit) 시점, autocomplete="off" : 회원 가입 시 기존 아이디가 자동완성으로 뜨면 사용자가 혼란스러울 수 있으므로 off로 끔. -->
 							<label id="idCheckResult">Please check your ID.</label>
 						</div>
 						
 						<!-- 2. 비밀번호 -->
-						<div class="col-12">
+						<!-- <div class="col-12">
 							<label for="pwd" class="form-label">PWD</label>
-							<input type="password" class="form-control"  placeholder="비밀번호(8자 이상, 특수문자 한 개 포함)" minlength="8" maxlength="16" pattern="^(?=.*[^a-zA-Z0-9\s]).{8,}$" oninvalid="this.setCustomValidity('비밀번호는 8자 이상이며, 특수문자를 최소 1개 이상 포함해야 합니다.')" oninput="this.setCustomValidity(''); validatePassword();" id="pwd" name="pwd" required>
-						</div>
-							
-						<!-- 3. 비밀번호 확인 -->
+						<input type="password" class="form-control" id="pwd" name="memberPw" placeholder="비밀번호(8자 이상 16자 이하, 특수문자 한 개 포함)" minlength="8" maxlength="16" pattern="^(?=.*[^a-zA-Z0-9\s]).{8,}$" oninvalid="this.setCustomValidity('비밀번호는 8자 이상 16자 이하이며, 특수문자를 최소 1개 이상 포함해야 합니다.')" oninput="this.setCustomValidity(''); validatePassword();" required>
+							위 코드는 한글이나 한자도 영문,숫자,공백이 아닌 문자로 인식해 특수문자로 통과시킬 수 있음
+							<input type="password" class="form-control" id="pwd" name="memberPw" placeholder="비밀번호(8자 이상 16자 이하, 특수문자 한 개 포함)" minlength="8" maxlength="16" pattern="^(?=.*[!@#$%^&*(),.?&quot;:{}|<>_\-+=\\/\[\]~`])[A-Za-z0-9!@#$%^&*(),.?&quot;:{}|<>_\-+=\\/\[\]~`]{8,16}$" oninvalid="this.setCustomValidity('비밀번호는 8자 이상 16자 이하의 영문, 숫자, 특수문자 조합이어야 합니다.')" oninput="this.setCustomValidity(''); validatePassword();" required>
+						</div> -->
 						<div class="col-12">
+  						 	 <label for="pwd" class="form-label">PWD</label>
+  							 <input type="password" class="form-control" id="pwd" name="memberPw" placeholder="비밀번호(8자 이상 16자 이하, 특수문자 한 개 포함)" maxlength="16" oninput="validatePassword()" required>
+    						 <div id="pwdMsg" class="form-text mt-1"></div>
+						</div>
+						<!-- 3. 비밀번호 확인 -->
+						<!-- <div class="col-12">
 							<label for="pwdCheck" class="form-label">PWD Confirm</label>
 							<input type="password" class="form-control" placeholder="비밀번호를 한 번 더 입력하세요" oninput="validatePassword()" id="pwdCheck" required>
-							<!-- 비밀번호 확인 -->
-							<!-- for="pwdConfirm" -> for="pwdCheck -->
+							비밀번호 확인
+							for="pwdConfirm" -> for="pwdCheck"(id와 같게)
+						</div> -->
+						<div class="col-12">
+  							  <label for="pwdCheck" class="form-label">PWD CHECK</label>
+    						  <input type="password" class="form-control" id="pwdCheck" placeholder="비밀번호 확인" maxlength="16" oninput="validatePassword()" required>
+    						  <div id="pwdCheckMsg" class="form-text mt-1"></div>
 						</div>
 						
 						<!-- 4. 이름 -->
 						<div class="col-12">
 							<label for="name" class="form-label">NAME</label>
-							<input type="text" class="form-control" id="name" name="name" required>
+							<input type="text" class="form-control" id="name" name="memberName" required>
 						</div>
 						
 						<!-- 5. 닉네임 -->
@@ -58,16 +70,29 @@
 						
 						<!-- 6. 이메일 -->
 						<div class="col-12">
+							<input type="hidden" id="fullEmail" name="email">
 							<label for="emailId" class="form-label">EMAIL</label>
 							<div class="input-group">
-								<input type="text" class="form-control" id="emailId" name="emailId">
+						   <!-- <input type="text" class="form-control" id="emailId" name="emailId" oninput="if(this.value.includes('@')) this.value = this.value.split('@')[0];"> -->
+								<input type="text" class="form-control" id="emailId" name="emailId" oninput="this.value = this.value.split('@')[0].replace(/\s/g, '')">
 								<span class="input-group-text">@</span>
-								<select name="emailDomain" style="width: 280px;">
+							
+						   <!-- <select id="emailDomain" class="form-select" onchange="toggleDirectInput(this)" > -->
+								<select id="emailDomain" name="emailDomain" class="form-select" style="max-width: 125px;" onchange="toggleDirectInput(this)">
+    								<option value="gmail.com">gmail.com</option>
+    								<option value="naver.com">naver.com</option>
+    								<option value="nate.com">nate.com</option>
+									<option value="hanmail.net">hanmail.net</option>
+    								<option value="direct">직접 입력</option>
+								</select>
+								<input type="text" id="directDomain" class="form-control d-none" placeholder="예: kakao.com">
+								
+							<!-- <select name="emailDomain" style="width: 280px;">
 									<option>naver.com</option>
 									<option>gmail.com</option>
 									<option>nate.com</option>
 									<option>hanmail.net</option>
-								</select>
+								</select> -->
 							</div>
 						</div>
 						
@@ -81,19 +106,83 @@
 						<!-- 8. 나이 -->
 						<div class="col-12">
 							<label for="age" class="form-label">AGE</label>
-							<input type="number" class="form-control" id="age" name="age" min="0" max="100" value="0">
+							<input type="number" class="form-control" id="age" name="age" min="14" max="100" required>
+							<!-- value="0" 삭제, 만 14세 이상부터 회원가입 -->
 						</div>
 						
 						<!-- 9. 전화번호 -->
 						<div class="col-12">
 							<label for="phone" class="form-label">PHONE</label>
-							<input type="text" class="form-control" id="phone" name="phone">
+							<input type="text" class="form-control" id="phone" name="phone" required>
 						</div>
 						
 						<!-- 10. 주소 -->
 						<div class="col-12">
 							<label for="address" class="form-label">ADDRESS</label>
-							<input type="text" class="form-control" id="address" name="address">
+							<input type="text" class="form-control" id="address" name="address" required>
+						</div>
+						
+						<!-- 11. 약관 동의 영역 -->
+						<div class="col-12 mt-4">
+						    <div class="p-3 border rounded bg-light">
+						        <!-- 전체 동의 -->
+						        <div class="form-check pb-2 mb-2 border-bottom">
+						            <input class="form-check-input" type="checkbox" id="agreeAll" onclick="toggleAllTerms(this)">
+						            <label class="form-check-label fw-bold" for="agreeAll">
+						                전체 동의하기 (선택 항목 포함)
+						            </label>
+						        </div>
+						
+						        <!-- 1) 만 14세 이상 (필수) -->
+						        <div class="form-check mb-2">
+						            <input class="form-check-input term-chk required-term" type="checkbox" id="agreeAge" onclick="checkIndividualTerm()">
+						            <label class="form-check-label" for="agreeAge">
+						                <span class="text-danger fw-bold">[필수]</span> 만 14세 이상입니다.
+						            </label>
+						        </div>
+						
+						        <!-- 2) 서비스 이용약관 (필수) -->
+						        <div class="form-check mb-2 d-flex justify-content-between align-items-center">
+						            <div>
+						                <input class="form-check-input term-chk required-term" type="checkbox" id="agreeService" onclick="checkIndividualTerm()">
+						                <label class="form-check-label" for="agreeService">
+						                    <span class="text-danger fw-bold">[필수]</span> 서비스 이용약관 동의
+						                </label>
+						            </div>
+						            <button type="button" class="btn btn-sm btn-link text-secondary p-0" data-bs-toggle="collapse" data-bs-target="#termServiceDetail">내용보기</button>
+						        </div>
+						        <div class="collapse mb-2" id="termServiceDetail">
+						            <div class="card card-body small text-muted" style="max-height: 100px; overflow-y: auto;">
+						                제1조(목적) 본 약관은 회사가 제공하는 서비스의 이용조건 및 절차, 회원과 회사의 권리·의무 및 책임사항을 규정함을 목적으로 합니다.
+						            </div>
+						        </div>
+						
+						        <!-- 3) 개인정보 수집 및 이용 동의 (필수) -->
+						        <div class="form-check mb-2 d-flex justify-content-between align-items-center">
+						            <div>
+						                <input class="form-check-input term-chk required-term" type="checkbox" id="agreePrivacy" onclick="checkIndividualTerm()">
+						                <label class="form-check-label" for="agreePrivacy">
+						                    <span class="text-danger fw-bold">[필수]</span> 개인정보 수집 및 이용 동의
+						                </label>
+						            </div>
+						            <button type="button" class="btn btn-sm btn-link text-secondary p-0" data-bs-toggle="collapse" data-bs-target="#termPrivacyDetail">내용보기</button>
+						        </div>
+						        <div class="collapse mb-2" id="termPrivacyDetail">
+						            <div class="card card-body small text-muted" style="max-height: 100px; overflow-y: auto;">
+						                1. 수집항목: 아이디, 비밀번호, 이름, 닉네임, 이메일, 성별, 나이, 전화번호, 주소<br>
+						                2. 수집목적: 회원 가입 및 서비스 이용에 따른 본인 확인, 고지사항 전달<br>
+						                3. 보유기간: 회원 탈퇴 시까지 (관계 법령에 따라 보존할 필요가 있는 경우 해당 기간까지 보관)
+						            </div>
+						        </div>
+						
+						        <!-- 4) 마케팅 정보 수신 동의 (선택) -->
+						        <div class="form-check">
+						            <input class="form-check-input term-chk" type="checkbox" id="agreeMarketing" name="marketingAgree" value="Y" onclick="checkIndividualTerm()">
+						            <label class="form-check-label" for="agreeMarketing">
+						                <span class="text-secondary">[선택]</span> 이벤트 및 혜택 알림 수신 동의
+						            </label>
+						        </div>
+						    </div>
 						</div>
 						
 						<br><br><br><br><br>
@@ -139,9 +228,14 @@
 
         // 형식이 맞으면 서버에 비동기(AJAX) 중복 확인 요청
         // (Spring Boot 컨트롤러 URL에 맞게 수정하세요)
-        fetch('/member/checkId?id=' + encodeURIComponent(idVal))
-            .then(response => response.text()) 	// 서버에서 "0"(사용가능) 또는 "1"(중복) 반환 가정
+        fetch('/mmm/api/member/checkId?id=' + encodeURIComponent(idVal))
+            .then(response => {
+            	console.log('HTTP 상태코드:', response.status);
+            	return response.text()
+            }) 	// 서버에서 "0"(사용가능) 또는 "1"(중복) 반환 가정
             .then(result => {
+            	console.log('서버 실제 응답값:', result); // 여기에 찍히는 값을 확인하세요!
+            	
                 if (result === '0') {
                     idCheckResult.textContent = '사용 가능한 아이디입니다.';
                     idCheckResult.style.color = 'green';
@@ -166,7 +260,7 @@
             return;
         }
 
-        fetch('/member/checkNickName?nickName=' + encodeURIComponent(nickVal))
+        fetch('/mmm/api/member/checkNickName?nickName=' + encodeURIComponent(nickVal))
             .then(response => response.text())
             .then(result => {
                 if (result === '0') {
@@ -181,8 +275,71 @@
             })
             .catch(err => console.error('닉네임 중복체크 오류:', err));
     });
+    
+    
+    let isPwdValid = false; // 비밀번호 검증 상태 저장
 
-    // 3. 비밀번호 일치 여부 실시간 검증 (HTML의 oninput="validatePassword()"와 연결)
+    function validatePassword() {
+        const pwd = document.getElementById('pwd').value;
+        const pwdCheck = document.getElementById('pwdCheck').value;
+        const pwdMsg = document.getElementById('pwdMsg');
+        const pwdCheckMsg = document.getElementById('pwdCheckMsg');
+
+        // 8~16자, 영문/숫자/특수문자 조합 (특수문자 최소 1개 필수)
+        const pwdRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>_\-+=\\/\[\]~`])[A-Za-z0-9!@#$%^&*(),.?":{}|<>_\-+=\\/\[\]~`]{8,16}$/;
+
+        let isRuleOk = false;
+        let isMatchOk = false;
+
+        // 1) 비밀번호 규칙 검사
+        if (pwd === '') {
+            pwdMsg.textContent = '';
+        } else if (!pwdRegex.test(pwd)) {
+            pwdMsg.textContent = '8~16자의 영문, 숫자, 특수문자를 조합해 주세요. (특수문자 1개 이상 포함)';
+            pwdMsg.className = 'form-text mt-1 text-danger';
+        } else {
+            pwdMsg.textContent = '사용 가능한 비밀번호입니다.';
+            pwdMsg.className = 'form-text mt-1 text-success';
+            isRuleOk = true;
+        }
+
+        // 2) 비밀번호 일치 여부 검사
+        if (pwdCheck === '') {
+            pwdCheckMsg.textContent = '';
+        } else if (pwd !== pwdCheck) {
+            pwdCheckMsg.textContent = '비밀번호가 일치하지 않습니다.';
+            pwdCheckMsg.className = 'form-text mt-1 text-danger';
+        } else {
+            pwdCheckMsg.textContent = '비밀번호가 일치합니다.';
+            pwdCheckMsg.className = 'form-text mt-1 text-success';
+            isMatchOk = true;
+        }
+
+        // 둘 다 통과해야 true
+        isPwdValid = isRuleOk && isMatchOk;
+    }
+    
+    function toggleDirectInput(selectObj) {
+        const directInput = document.getElementById('directDomain');
+
+        if (selectObj.value === 'direct') {
+            // '직접 입력' 선택 시 input 보이기 & name 속성 이동
+            directInput.classList.remove('d-none');
+            directInput.setAttribute('name', 'emailDomain');
+            directInput.required = true;
+            selectObj.removeAttribute('name');
+            directInput.focus();
+        } else {
+            // 일반 도메인 선택 시 input 숨기기 & name 속성 복구
+            directInput.classList.add('d-none');
+            directInput.removeAttribute('name');
+            directInput.required = false;
+            directInput.value = '';
+            selectObj.setAttribute('name', 'emailDomain');
+        }
+    }
+
+    /* // 3. 비밀번호 일치 여부 실시간 검증 (HTML의 oninput="validatePassword()"와 연결)
     function validatePassword() {
         const pwd = document.getElementById('pwd');
         const pwdCheck = document.getElementById('pwdCheck');
@@ -192,8 +349,23 @@
         } else {
             pwdCheck.setCustomValidity(''); // 일치하면 에러 메시지 초기화
         }
+    } */
+    
+ 	// 1) 전체 동의 체크박스 클릭 시 하위 체크박스 일괄 제어
+    function toggleAllTerms(allChk) {
+        const checkboxes = document.querySelectorAll('.term-chk');
+        checkboxes.forEach(chk => {
+            chk.checked = allChk.checked;
+        });
     }
 
+    // 2) 개별 체크박스 클릭 시 전체 동의 체크박스 상태 동기화
+    function checkIndividualTerm() {
+        const total = document.querySelectorAll('.term-chk').length;
+        const checked = document.querySelectorAll('.term-chk:checked').length;
+        document.getElementById('agreeAll').checked = (total === checked);
+    }
+    
     // 4. 최종 폼 제출 시 검증 (HTML의 onsubmit="return validateForm()"와 연결)
     function validateForm() {
         if (!isIdValid) {
@@ -205,7 +377,68 @@
             alert('닉네임을 확인해 주세요.');
             nickNameInput.focus();
             return false;
+        } 
+        if (!isPwdValid) {
+            alert('비밀번호를 확인해 주세요.');
+            document.getElementById('pwd').focus();
+            return false;
         }
+     // ▼ 전화번호 필수 입력 검증 추가
+        const phoneInput = document.getElementById('phone');
+        const phoneVal = phoneInput.value.trim();
+//      const phoneRegex = /^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$/;
+// 		const phoneRegex = /^(01[0-9]|02|0[3-9][0-9])-?[0-9]{3,4}-?[0-9]{4}$/;		// 지역번호, 인터넷전화 포함
+// 		const phoneRegex = /^(01[0-9]|02|0[3-6][1-5])-?[0-9]{3,4}-?[0-9]{4}$/;		// 인터넷 전화 제외(지역번호, 휴대전화번호)
+//      const phoneRegex = /^(010|02|0[3-6][1-5])-?[0-9]{3,4}-?[0-9]{4}$/;			// 휴대전화 번호 010만 
+        const phoneRegex = /^(010-?[0-9]{4}-?[0-9]{4}|(02|0[3-6][1-5])-?[0-9]{3,4}-?[0-9]{4})$/;		// 010은 반드시 11자리 입력하게 변동
+     // 1) 필수 입력 검증
+        if (phoneVal === '') {
+            alert('전화번호를 입력해 주세요.');
+            phoneInput.focus();
+            return false;
+        }
+
+        // 2) 형식 검증
+        if (!phoneRegex.test(phoneVal)) {
+            alert('올바른 전화번호 형식을 입력해 주세요.');
+            phoneInput.focus();
+            return false;
+        }
+        
+        // 이메일 직접 입력 도메인 검증
+        const domainSelect = document.getElementById('emailDomain');
+        if (domainSelect.value === 'direct') {
+            const directDomain = document.getElementById('directDomain');
+            const domainRegex = /^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+            if (!domainRegex.test(directDomain.value.trim())) {
+                alert('올바른 이메일 도메인 형식을 입력해 주세요. (예: example.com)');
+                directDomain.focus();
+                return false;
+            }
+        }
+//         if (phoneInput.value.trim() === '') {
+//             alert('전화번호를 입력해 주세요.');
+//             phoneInput.focus();
+//             return false;
+//         }
+
+		 // 3) 필수 약관 동의 검증 (validateForm 내부에 추가)
+	    const requiredTerms = document.querySelectorAll('.required-term');
+	    for (let term of requiredTerms) {
+	        if (!term.checked) {
+	            alert('필수 약관에 모두 동의해 주세요.');
+	            term.focus();
+	            return false;
+	        }
+	    }
+		
+	    const emailIdVal = document.getElementById('emailId').value.trim();
+	    const domainSelectVal = document.getElementById('emailDomain').value;
+	    const domainVal = (domainSelectVal === 'direct') ? document.getElementById('directDomain').value.trim() : domainSelectVal;
+
+	    document.getElementById('fullEmail').value = emailIdVal + '@' + domainVal;
+
         return true; // 모든 검증 통과 시 /member/enroll 로 POST 전송
     }
     
