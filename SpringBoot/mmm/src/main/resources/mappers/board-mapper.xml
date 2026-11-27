@@ -1,26 +1,173 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kh.rechargetech.mmm.board.model.mapper.BoardMapper">
-	<select id="selectBoardList"
-	        resultType="kh.rechargetech.mmm.board.model.vo.Board">
+
+	<!-- 게시글 목록 조회 -->
+	<select id="selectBoardList" resultType="kh.rechargetech.mmm.board.model.vo.Board">
+	    SELECT B.BOARD_NO AS boardNo, B.BOARD_TYPE AS boardType, B.MEMBER_NO AS memberNo,
+	           B.BOARD_TITLE AS boardTitle, B.BOARD_DATE AS boardDate, M.NICKNAME AS nickname,
+	     	   (SELECT COUNT(*)
+	           	FROM REPLY R
+	           	WHERE R.BOARD_NO = B.BOARD_NO)
+	           	AS replyCount
+	    FROM BOARD B
+		JOIN MEMBER M
+			ON B.MEMBER_NO = M.MEMBER_NO
+		WHERE B.BOARD_TYPE = 3
+		ORDER BY B.BOARD_DATE DESC, B.BOARD_NO DESC
+	</select>	
 	
-	    SELECT
-	        B.BOARD_NO AS boardNo,
-	        B.BOARD_TYPE AS boardType,
-	        B.MEMBER_NO AS memberNo,
-	        B.BOARD_TITLE AS boardTitle,
-	        B.BOARD_DATE AS boardDate,
-	        M.NICKNAME AS nickname,
-	        (
-	            SELECT COUNT(*)
+	<!-- 게시글 상세 조회 -->
+	<select id="selectBoardDetail" resultType="kh.rechargetech.mmm.board.model.vo.Board">
+	    SELECT B.BOARD_NO AS boardNo, B.MEMBER_NO AS memberNo, B.BOARD_TYPE AS boardType, B.BOARD_TITLE AS boardTitle,
+	       	   B.BOARD_CON AS boardCon, B.BOARD_MOD_DATE AS boardModDate, B.BOARD_DATE AS boardDate, M.NICKNAME AS nickname,
+	           (SELECT COUNT(*)
+	           	FROM REPLY R
+	           	WHERE R.BOARD_NO = B.BOARD_NO)
+	           	AS replyCount
+	    FROM BOARD B
+	    JOIN MEMBER M
+	    	ON B.MEMBER_NO = M.MEMBER_NO
+	   	WHERE B.BOARD_NO = #{boardNo}
+	    AND B.BOARD_TYPE = 3
+	</select>
+	
+	<!-- 게시글 페이지 이동 -->
+	<select id="selectBoardPage" resultType="kh.rechargetech.mmm.board.model.vo.Board">
+	    SELECT boardNo, memberNo, boardType, boardTitle, boardDate, nickname, replyCount
+	    FROM (SELECT B.BOARD_NO AS boardNo, B.MEMBER_NO AS memberNo, B.BOARD_TYPE AS boardType,
+	            	 B.BOARD_TITLE AS boardTitle, B.BOARD_DATE AS boardDate, M.NICKNAME AS nickname,
+	           (SELECT COUNT(*)
 	            FROM REPLY R
-	            WHERE R.BOARD_NO = B.BOARD_NO
-	        ) AS replyCount
+	            WHERE R.BOARD_NO = B.BOARD_NO)
+	            AS replyCount,
+	            <!-- 최신 게시글 순으로 정렬하면서 각 행에 순번을 부여 -->
+	            ROW_NUMBER() OVER (ORDER BY B.BOARD_DATE DESC, B.BOARD_NO DESC) AS rn
+				FROM BOARD B
+		        JOIN MEMBER M
+		            ON B.MEMBER_NO = M.MEMBER_NO
+		        WHERE B.BOARD_TYPE = 3)
+		<!-- 부여된 순번을 기준으로 필요한 범위의 게시글만 조회 -->
+		WHERE rn BETWEEN #{param1} AND #{param2}
+		ORDER BY rn
+	</select>
+		
+	<!-- 게시글 개수 조회 -->
+	<select id="selectBoardCount" resultType="int">
+	    SELECT COUNT(*)
+	   	FROM BOARD B
+	    JOIN MEMBER M
+	    	ON B.MEMBER_NO = M.MEMBER_NO
+	    WHERE B.BOARD_TYPE = 3
+	</select>
+		
+	<!--  게시글 검색 -->
+	<select id="searchBoard" resultType="kh.rechargetech.mmm.board.model.vo.Board">
+	    SELECT B.BOARD_NO AS boardNo, B.MEMBER_NO AS memberNo, B.BOARD_TYPE AS boardType,
+	           B.BOARD_TITLE AS boardTitle, B.BOARD_DATE AS boardDate, M.NICKNAME AS nickname,
+	           (SELECT COUNT(*)
+	            FROM REPLY R
+	            WHERE R.BOARD_NO = B.BOARD_NO)
+	            AS replyCount
 	    FROM BOARD B
 	    JOIN MEMBER M
 	        ON B.MEMBER_NO = M.MEMBER_NO
 	    WHERE B.BOARD_TYPE = 3
+	    AND ((#{param1} = 'title' AND B.BOARD_TITLE LIKE '%' || #{param2} || '%')
+	        OR (#{param1} = 'content' AND B.BOARD_CON LIKE '%' || #{param2} || '%')
+	        OR (#{param1} = 'nickname' AND M.NICKNAME LIKE '%' || #{param2} || '%'))
 	    ORDER BY B.BOARD_DATE DESC, B.BOARD_NO DESC
+	</select>
 	
-	</select>	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 </mapper>
